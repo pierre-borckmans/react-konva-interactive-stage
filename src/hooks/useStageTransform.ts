@@ -101,7 +101,7 @@ export function useStageTransform({
 
   // Reset zoom when bounds change from null to real bounds
   useDeepEffect(() => {
-    if (zoom !== 1) return;
+    if (zoom !== 1 || bounds.width === 1) return;
     resetZoom({ animate: true });
   }, [bounds]);
 

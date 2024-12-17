@@ -9,6 +9,8 @@ export default function OptionsPanel({
   setPanSpeed,
   zoomSpeed,
   setZoomSpeed,
+  zoomAnimationDuration,
+  setZoomAnimationDuration,
 }: {
   debug: boolean;
   toggleDebug: (debug: boolean) => void;
@@ -20,13 +22,15 @@ export default function OptionsPanel({
   setPanSpeed: (panSpeed: number) => void;
   zoomSpeed: number;
   setZoomSpeed: (zoomSpeed: number) => void;
+  zoomAnimationDuration: number;
+  setZoomAnimationDuration: (zoomAnimationDuration: number) => void;
 }) {
   return (
-    <div className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg px-6 py-2 h-full w-full">
+    <div className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg px-4 md:px-6 py-2 h-full w-full">
       <h2 className="text-base font-medium text-gray-900 dark:text-white mb-3">
         Options
       </h2>
-      <div className="grid lg:grid-cols-2 gap-x-6 gap-y-3">
+      <div className="grid lg:grid-cols-2 gap-y-3">
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -65,9 +69,11 @@ export default function OptionsPanel({
         <div className="flex items-center gap-2">
           <input
             type="range"
-            className="lg:w-32 sm:w-24 w-14"
+            id="max-zoom"
+            className="xl:w-24 lg:w-16 sm:w-28 w-9"
             min={1}
             max={50}
+            step={0.1}
             value={maxZoom}
             onChange={(e) => {
               setMaxZoom(Number(e.target.value));
@@ -83,10 +89,12 @@ export default function OptionsPanel({
 
         <div className="flex items-center gap-2">
           <input
-            className="lg:w-32 sm:w-24 w-14"
             type="range"
+            id="pan-speed"
+            className="xl:w-24 lg:w-16 sm:w-28 w-9"
             min={0.1}
             max={10}
+            step={0.1}
             value={panSpeed}
             onChange={(e) => {
               setPanSpeed(Number(e.target.value));
@@ -103,9 +111,11 @@ export default function OptionsPanel({
         <div className="flex items-center gap-2">
           <input
             type="range"
-            className="lg:w-32 sm:w-24 w-14"
+            id="zoom-speed"
+            className="xl:w-24 lg:w-16 sm:w-28 w-9"
             min={1}
             max={10}
+            step={0.1}
             value={zoomSpeed}
             onChange={(e) => {
               setZoomSpeed(Number(e.target.value));
@@ -116,6 +126,27 @@ export default function OptionsPanel({
             className="text-sm font-medium cursor-pointer text-neutral-700 dark:text-neutral-200"
           >
             Zoom Speed ({zoomSpeed})
+          </label>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="range"
+            id="zoom-animation-duration"
+            className="xl:w-24 lg:w-16 sm:w-28 w-9"
+            min={0.05}
+            max={3}
+            step={0.05}
+            value={zoomAnimationDuration}
+            onChange={(e) => {
+              setZoomAnimationDuration(Number(e.target.value));
+            }}
+          />
+          <label
+            htmlFor="zoom-animation-duration"
+            className="text-sm font-medium cursor-pointer text-neutral-700 dark:text-neutral-200"
+          >
+            Zoom Animation ({zoomAnimationDuration}s)
           </label>
         </div>
       </div>

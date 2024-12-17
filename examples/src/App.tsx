@@ -37,6 +37,7 @@ function App() {
   const [maxZoom, setMaxZoom] = useState(5);
   const [panSpeed, setPanSpeed] = useState(1.5);
   const [zoomSpeed, setZoomSpeed] = useState(5);
+  const [zoomAnimationDuration, setZoomAnimationDuration] = useState(0.3);
 
   const [extraShapes, setExtraShapes] = useState<ReactNode[]>([]);
 
@@ -84,6 +85,8 @@ function App() {
                 setPanSpeed={setPanSpeed}
                 zoomSpeed={zoomSpeed}
                 setZoomSpeed={setZoomSpeed}
+                zoomAnimationDuration={zoomAnimationDuration}
+                setZoomAnimationDuration={setZoomAnimationDuration}
               />
             </div>
 
@@ -101,6 +104,7 @@ function App() {
                     zoomSpeed,
                     debug,
                     clampPosition,
+                    zoomAnimationDuration,
                   }}
                   className="bg-gray-50 dark:bg-gray-900 rounded-md p-4"
                 >
@@ -114,7 +118,6 @@ function App() {
                       extraShapes={extraShapes}
                       onShapeClick={(e) =>
                         zoomToElement(e.target, {
-                          duration: 0.3,
                           paddingPercent: 0.2,
                         })
                       }

@@ -61,6 +61,8 @@ export interface InteractiveStageOptions {
   maxZoom?: number;
   /** Speed of zooming. Default: 5 */
   zoomSpeed?: number;
+  /** Speed of panning. Default: 0.3 */
+  zoomAnimationDuration?: number;
   /** Speed of panning. Default: 1 */
   panSpeed?: number;
   /** Whether to clamp the position to the bounds. Default: true */

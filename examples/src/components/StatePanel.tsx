@@ -18,7 +18,7 @@ const StatePanel = ({
   visibleRect,
 }: StatePanelProps) => {
   return (
-    <div className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg px-6 py-2 h-full w-full">
+    <div className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg px-4 md:px-6 py-2 h-full w-full">
       <h2 className="text-base font-medium text-gray-900 dark:text-white mb-3">
         Stage State
       </h2>

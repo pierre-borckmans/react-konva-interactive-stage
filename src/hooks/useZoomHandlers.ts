@@ -82,29 +82,29 @@ export function useZoomHandlers({
         container,
       );
 
-      // Always use animation for reset to ensure consistent behavior
-      const stage = stageRef.current;
-      stage.to({
-        duration: animate ? 0.3 : 0,
-        scaleX: newScale,
-        scaleY: newScale,
-        x: newPosition.x,
-        y: newPosition.y,
-        easing: Konva.Easings.EaseInOut,
-        onFinish: () => {
-          setScale(newScale);
-          setPosition(newPosition, newScale);
-        },
+      animateZoom({
+        newScale,
+        newX: newPosition.x,
+        newY: newPosition.y,
+        duration: animate ? options.zoomAnimationDuration : 0,
+        startScale: scale,
+        startX: position.x,
+        startY: position.y,
       });
     },
     [container, stageRef, setScale, setPosition],
   );
 
   const zoomToElement = useCallback(
-    (target: Konva.Node, options: ZoomOptions = {}) => {
+    (target: Konva.Node, opt: ZoomOptions = {}) => {
       if (!stageRef.current) return;
 
-      const { paddingPercent = 0.0, duration = 0.3 } = options;
+      // const { paddingPercent = 0.0, duration = 0.3 } = options;
+      const paddingPercent = opt.paddingPercent ?? 0.0;
+      const duration =
+        opt.duration !== undefined
+          ? opt.duration
+          : options.zoomAnimationDuration;
       const stage = stageRef.current;
       const resetScale = resetScaleRef.current!;
 
@@ -148,31 +148,16 @@ export function useZoomHandlers({
       const startScale = scale;
       const startX = position.x;
       const startY = position.y;
-      const startTime = Date.now();
 
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / (duration * 1000), 1);
-
-        // Use easeInOut curve
-        const eased =
-          progress < 0.5
-            ? 2 * progress * progress
-            : -1 + (4 - 2 * progress) * progress;
-
-        const currentScale = startScale + (newScale - startScale) * eased;
-        const currentX = startX + (newX - startX) * eased;
-        const currentY = startY + (newY - startY) * eased;
-
-        setScale(currentScale);
-        setPosition({ x: currentX, y: currentY }, currentScale);
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
-      };
-
-      animate();
+      animateZoom({
+        newScale,
+        newX,
+        newY,
+        duration,
+        startScale,
+        startX,
+        startY,
+      });
     },
     [
       stageRef,
@@ -186,6 +171,58 @@ export function useZoomHandlers({
       setPosition,
     ],
   );
+
+  const animateZoom = ({
+    startTime = Date.now(),
+    newScale,
+    newX,
+    newY,
+    duration,
+    startScale,
+    startX,
+    startY,
+  }: {
+    startTime?: number;
+    newScale: number;
+    newX: number;
+    newY: number;
+    duration: number;
+    startScale: number;
+    startX: number;
+    startY: number;
+  }) => {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / (duration * 1000), 1);
+
+    // Use easeInOut curve
+    const eased =
+      progress < 0.5
+        ? 2 * progress * progress
+        : -1 + (4 - 2 * progress) * progress;
+
+    const currentScale = startScale + (newScale - startScale) * eased;
+    const currentX = startX + (newX - startX) * eased;
+    const currentY = startY + (newY - startY) * eased;
+
+    setScale(currentScale);
+    setPosition({ x: currentX, y: currentY }, currentScale);
+    if (duration <= 0) return;
+
+    if (progress < 1) {
+      requestAnimationFrame(() => {
+        animateZoom({
+          startTime,
+          newScale,
+          newX,
+          newY,
+          duration,
+          startScale,
+          startX,
+          startY,
+        });
+      });
+    }
+  };
 
   const zoom = scale / resetScaleRef.current;
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
 import { useStageTransform } from "./hooks/useStageTransform";
@@ -16,6 +16,7 @@ const ABSOLUTE_MAX_PAN_SPEED = 10;
 const defaultOptions: Required<InteractiveStageOptions> = {
   maxZoom: ABSOLUTE_MAX_ZOOM,
   zoomSpeed: 5,
+  zoomAnimationDuration: 0.3,
   panSpeed: 1,
   zoomPanTransitionDelay: 200,
   loadingDelay: 500,
@@ -65,6 +66,7 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
   options.zoomSpeed = Math.min(options.zoomSpeed, ABSOLUTE_MAX_ZOOM_SPEED);
 
   const loading = stageRef.current === null;
+  const [ready, setReady] = useState(false);
 
   const { width, height } = dimensions;
 
@@ -78,7 +80,6 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
     updateBounds,
     initialScale,
     scale,
-    initialPosition,
     position,
     handleDragStart,
     handleDragEnd,
@@ -115,6 +116,9 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
           opacity: 1,
           duration: 0.2,
           easing: Konva.Easings.EaseInOut,
+          onFinish: () => {
+            setReady(true);
+          },
         });
       }
     }, options.loadingDelay);
@@ -205,7 +209,7 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
           visibleRect={visibleRect}
           minimapPct={minimapPct}
           container={container}
-          loading={loading}
+          ready={ready}
         />
       </div>
     </div>

@@ -9,7 +9,7 @@ export const InstructionsPanel = ({
   onRemoveShape: () => void;
 }) => {
   return (
-    <div className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg px-6 py-4 gap-2">
+    <div className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg px-4 md:px-6 py-4 gap-2">
       <div className="flex items-center justify-between gap-5">
         <div className="flex flex-col">
           <h2 className="text-base font-medium text-gray-900 dark:text-white">
