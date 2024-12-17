@@ -39,6 +39,7 @@ export interface InteractiveStageRenderProps {
   zoomToElement: (target: Konva.Node, options?: ZoomOptions) => void;
   resetZoom: () => void;
   scale: number;
+  container: Dimensions;
   bounds: Bounds;
   updateBounds: () => void;
   position: Point;

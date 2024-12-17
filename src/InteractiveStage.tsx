@@ -5,6 +5,7 @@ import { useStageTransform } from "./hooks/useStageTransform";
 import { InteractiveStageOptions, InteractiveStageProps } from "./types";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import useCallbacks from "./hooks/useCallbacks";
+import Minimap from "./minimap/Minimap";
 
 const ABSOLUTE_MAX_ZOOM = 100;
 const ABSOLUTE_MIN_ZOOM_SPEED = 0.1;
@@ -75,7 +76,9 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
   const {
     bounds,
     updateBounds,
+    initialScale,
     scale,
+    initialPosition,
     position,
     handleDragStart,
     handleDragEnd,
@@ -131,6 +134,7 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
   });
 
   const renderProps = {
+    container,
     zoomToElement,
     resetZoom,
     loading,
@@ -144,13 +148,22 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
     options,
   };
 
+  const minimapPct = 0.15;
+
   return (
     <div
       ref={containerRef}
       className={className}
-      style={{ position: "relative", width: "100%", height: "100%", ...style }}
+      style={{ width: "100%", height: "100%", ...style }}
     >
-      <div style={{ width, height }} ref={wheelContainerRef} className="border">
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+        }}
+        ref={wheelContainerRef}
+      >
         <Stage
           {...stageProps}
           ref={stageRef}
@@ -180,10 +193,20 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
               />
             </Layer>
           )}
+
           <Layer id="interactive-layer">
             {typeof children === "function" ? children(renderProps) : children}
           </Layer>
         </Stage>
+        <Minimap
+          scale={scale}
+          initialScale={initialScale}
+          bounds={bounds}
+          visibleRect={visibleRect}
+          minimapPct={minimapPct}
+          container={container}
+          loading={loading}
+        />
       </div>
     </div>
   );

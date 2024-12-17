@@ -8,4 +8,9 @@ export default defineConfig({
   server: {
     host: true,
   },
+  resolve: {
+    alias: process.env.NODE_ENV === 'development' ? {
+      'react-konva-interactive-stage': path.resolve(__dirname, '../src/index.ts'),
+    } : {},
+  },
 });

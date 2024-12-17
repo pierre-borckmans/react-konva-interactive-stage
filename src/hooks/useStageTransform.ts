@@ -6,7 +6,11 @@ import {
   InteractiveStageRef,
 } from "../types";
 import { useZoomHandlers } from "./useZoomHandlers";
-import { calculateVisibleRect, clampPosition } from "./transform-utils";
+import {
+  calculateVisibleRect,
+  clampPosition,
+  getResetTransform,
+} from "./transform-utils";
 import { useStageResize } from "./useStageResize";
 import { useStageBounds } from "./useStageBounds";
 import { useWheelHandlers } from "./useWheelHandlers";
@@ -126,10 +130,16 @@ export function useStageTransform({
     [position.x, position.y, scale, container.width, container.height],
   );
 
+  const initialTransform = useMemo(() => {
+    return getResetTransform(bounds, container);
+  }, [bounds, container]);
+
   return {
     wheelContainerRef,
 
+    initialScale: initialTransform.scale,
     scale,
+    initialPosition: initialTransform.position,
     position,
 
     // stage bounds and visible rect
