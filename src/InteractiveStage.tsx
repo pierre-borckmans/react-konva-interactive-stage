@@ -191,7 +191,8 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
         }}
         ref={wheelContainerRef}
       >
-        <Stage
+      {options.debug && <FPSDisplay />}
+      <Stage
           ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
