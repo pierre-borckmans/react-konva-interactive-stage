@@ -14,6 +14,7 @@ import { Tab, TabList, TabGroup } from "@headlessui/react";
 import { color } from "./utils/color.ts";
 import { BasicShapes } from "./components/stages/BasicShapes.tsx";
 import { Images } from "./components/stages/Images.tsx";
+import { StressTest } from "./components/stages/StressTest.tsx";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -21,8 +22,30 @@ function classNames(...classes: string[]) {
 
 function App() {
   const [isDark, setIsDark] = useDarkMode(true);
-  const tabs = ["Basic Shapes", "Custom Content"];
+  const tabs = ["Basic Shapes", "Stress Test", "Custom Content"];
   const [selectedTab, setSelectedTab] = useState(0);
+  const [stressShapes, setStressShapes] = useState<Array<{ x: number; y: number; radius: number; color: string }>>(() => {
+    return Array.from({ length: 500 }, () => ({
+      x: Math.random() * 4000,
+      y: Math.random() * 4000,
+      radius: 5 + Math.random() * 10,
+      color: color(Math.random() * 15, isDark),
+    }));
+  });
+
+  const addShapes = (count: number) => {
+    const newShapes = Array.from({ length: count }, () => ({
+      x: Math.random() * 4000,
+      y: Math.random() * 4000,
+      radius: 5 + Math.random() * 10,
+      color: color(Math.random() * 15, isDark),
+    }));
+    setStressShapes((prev) => [...prev, ...newShapes]);
+  };
+
+  const clearShapes = () => {
+    setStressShapes([]);
+  };
 
   const stageRef = useRef<InteractiveStageType>(null);
 
@@ -124,6 +147,32 @@ function App() {
                 </TabList>
               </TabGroup>
 
+              {selectedTab === 1 && (
+                <div className="px-4 py-2 flex gap-2 items-center border-b border-gray-200 dark:border-gray-700">
+                  <button
+                    onClick={() => addShapes(100)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Add 100 Shapes
+                  </button>
+                  <button
+                    onClick={() => addShapes(1000)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Add 1000 Shapes
+                  </button>
+                  <button
+                    onClick={clearShapes}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Clear All
+                  </button>
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded px-4 py-2 text-gray-900 dark:text-white">
+                    Shapes: {stressShapes.length}
+                  </div>
+                </div>
+              )}
+
               <div
                 className="flex min-h-0 h-full p-4 pt-3 overflow-visible"
                 style={{ overflow: "visible" }}
@@ -159,6 +208,8 @@ function App() {
                           })
                         }
                       />
+                    ) : selectedTab === 1 ? (
+                      <StressTest isDark={isDark} shapes={stressShapes} />
                     ) : (
                       <Images />
                     )
