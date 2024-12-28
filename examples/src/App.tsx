@@ -102,22 +102,19 @@ function App() {
               />
             </div>
 
-            <div
-              className="w-full bg-white dark:bg-gray-800 shadow-sm rounded-lg min-h-0 flex flex-col h-full"
-              style={{ overflow: "visible" }}
-            >
+            <div className="w-full bg-white dark:bg-gray-800 shadow-sm rounded-lg min-h-0 flex flex-col h-full">
               <TabGroup selectedIndex={selectedTab} onChange={setSelectedTab}>
-                <TabList className="flex space-x-1 rounded-t-lg bg-gray-100 dark:bg-gray-700 p-2">
+                <TabList className="flex space-x-1 rounded-t-lg bg-gray-100 dark:bg-gray-900/50 rounded-t-lg py-1.5 px-4">
                   {tabs.map((tab) => (
                     <Tab
                       key={tab}
                       className={({ selected }) =>
                         classNames(
                           "w-full rounded-lg py-1.5 text-sm font-medium leading-5",
-                          "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-gray-100 dark:ring-offset-gray-700 ring-white/60 ring-opacity-60",
+                          "hover:bg-white/20",
                           selected
-                            ? "bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow"
-                            : "text-gray-500 dark:text-gray-400 hover:bg-white/[0.12] hover:text-gray-900 dark:hover:text-white",
+                            ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow"
+                            : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white",
                         )
                       }
                     >
@@ -128,7 +125,7 @@ function App() {
               </TabGroup>
 
               <div
-                className="flex min-h-0 h-full p-4 overflow-visible"
+                className="flex min-h-0 h-full p-4 pt-3 overflow-visible"
                 style={{ overflow: "visible" }}
               >
                 <InteractiveStage

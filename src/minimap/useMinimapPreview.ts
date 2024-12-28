@@ -21,6 +21,7 @@ interface UseMinimapPreviewProps {
   initialScale: number;
   enabled: boolean;
   ready: boolean;
+  throttleMs?: number;
   children:
     | React.ReactNode
     | ((props: InteractiveStageRenderProps) => ReactElement);
@@ -34,6 +35,7 @@ export function useMinimapPreview({
   initialScale,
   enabled,
   ready,
+  throttleMs = 200,
 }: UseMinimapPreviewProps): {
   preview: string | null;
   updatePreview: () => void;
@@ -100,12 +102,12 @@ export function useMinimapPreview({
 
   // Create a throttled version of capturePreview
   const throttledUpdateRef = useRef(
-    throttle(capturePreview, 100, { leading: true, trailing: true }),
+    throttle(capturePreview, throttleMs, { leading: true, trailing: true }),
   );
 
   // Update the throttled function when capturePreview changes
   useEffect(() => {
-    throttledUpdateRef.current = throttle(capturePreview, 100, {
+    throttledUpdateRef.current = throttle(capturePreview, throttleMs, {
       leading: true,
       trailing: true,
     });
@@ -123,9 +125,9 @@ export function useMinimapPreview({
   // Initial preview update when component is ready
   // and when the container dimensions change
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !enabled) return;
     throttledUpdateRef.current();
-  }, [ready, container.width, container.height]);
+  }, [ready, container.width, container.height, enabled]);
 
   return {
     preview,
