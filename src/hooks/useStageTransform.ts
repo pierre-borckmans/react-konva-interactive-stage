@@ -138,6 +138,7 @@ export function useStageTransform({
     handleZoom,
     options,
     loading,
+    zoom,
   });
 
   // Calculate visible area in world coordinates

@@ -16,6 +16,7 @@ interface Props {
   stageRef: RefObject<Konva.Stage>;
   loading: boolean;
   options: Required<InteractiveStageOptions>;
+  zoom: number;
 }
 
 /**
@@ -29,6 +30,7 @@ export function useWheelHandlers({
   stageRef,
   loading,
   options,
+  zoom,
 }: Props) {
   const { zoomPanTransitionDelay, panSpeed } = options;
   // Reference to the wheel event container
@@ -61,11 +63,24 @@ export function useWheelHandlers({
 
       // Handle zooming when Ctrl/Meta is pressed
       if (ctrlKey || metaKey) {
+        // Early exit if we're at zoom level 1 or maxZoom
+        if (zoom === 1 && dy > 0) {
+          return;
+        }
+        if (zoom === options.maxZoom && dy < 0) {
+          return;
+        }
+
         const direction = dy > 0 ? 1 : -1;
         handleZoom(pointer, direction, Math.abs(dy));
         lastZoomTime.current = Date.now();
       } else {
-        // Handle panning after zoom transition delay
+        // Panning
+        // Early exit if we're at zoom level 1
+        if (zoom === 1) {
+          return;
+        }
+
         const now = Date.now();
         const timeSinceZoom = now - lastZoomTime.current;
 
