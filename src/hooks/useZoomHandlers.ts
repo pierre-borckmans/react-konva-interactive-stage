@@ -20,6 +20,11 @@ interface Props {
   stageRef: RefObject<Konva.Stage>;
 }
 
+/**
+ * A hook that manages zoom operations on the stage.
+ * Handles smooth zooming with animation, zoom limits, and position adjustments.
+ * Provides functions for zooming to specific elements and resetting zoom.
+ */
 export function useZoomHandlers({
   bounds,
   container,
@@ -36,10 +41,12 @@ export function useZoomHandlers({
   const { scale: resetScale } = getResetTransform(bounds, container);
   const resetScaleRef = useRef(resetScale);
 
+  // Update reset scale reference when bounds or container change
   useEffect(() => {
     resetScaleRef.current = resetScale;
   }, [resetScale]);
 
+  // Handle zoom operations with dynamic speed and limits
   const handleZoom = useCallback(
     (pointer: Point, direction: number, deltaY = 100) => {
       const resetScale = resetScaleRef.current;
@@ -57,11 +64,13 @@ export function useZoomHandlers({
         resetScale * maxZoom,
       );
 
+      // Maintain pointer position during zoom
       const mousePointTo = {
         x: (pointer.x - position.x) / scale,
         y: (pointer.y - position.y) / scale,
       };
 
+      // Calculate new position to keep pointer at same spot
       const newPos = {
         x: pointer.x - mousePointTo.x * clampedScale,
         y: pointer.y - mousePointTo.y * clampedScale,
@@ -73,6 +82,7 @@ export function useZoomHandlers({
     [scale, position, setScale, setPosition, maxZoom, zoomSpeed, resetScaleRef],
   );
 
+  // Reset zoom to fit stage in container
   const handleReset = useCallback(
     ({ animate = true }: { animate?: boolean } = {}) => {
       if (!stageRef.current) return;
@@ -95,6 +105,7 @@ export function useZoomHandlers({
     [container, stageRef, setScale, setPosition],
   );
 
+  // Zoom to fit a specific element
   const zoomToElement = useCallback(
     (target: Konva.Node, opt: ZoomOptions = {}) => {
       if (!stageRef.current) return;

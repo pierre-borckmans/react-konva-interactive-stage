@@ -18,6 +18,10 @@ interface Props {
   options: Required<InteractiveStageOptions>;
 }
 
+/**
+ * A hook that manages wheel events for zooming and panning the stage.
+ * Uses Lethargy to detect "natural" scrolling and prevent accidental zooming.
+ */
 export function useWheelHandlers({
   position,
   setPosition,
@@ -27,9 +31,12 @@ export function useWheelHandlers({
   options,
 }: Props) {
   const { zoomPanTransitionDelay, panSpeed } = options;
+  // Reference to the wheel event container
   const wheelContainerRef = useRef<HTMLDivElement>(null);
+  // Track last zoom time for smooth transitions between zoom and pan
   const lastZoomTime = useRef(Date.now());
 
+  // Handle Meta/Control key release to update last zoom time
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "Meta" || e.key === "Control") {
@@ -41,6 +48,7 @@ export function useWheelHandlers({
     return () => window.removeEventListener("keyup", handleKeyUp);
   }, []);
 
+  // Use gesture hook to handle wheel events
   useWheel(
     ({ event, delta: [dx, dy], ctrlKey, metaKey }) => {
       if (loading) return;
@@ -51,20 +59,23 @@ export function useWheelHandlers({
       const pointer = stage.getPointerPosition();
       if (!pointer) return;
 
-      const now = Date.now();
-      const timeSinceZoom = now - lastZoomTime.current;
-
+      // Handle zooming when Ctrl/Meta is pressed
       if (ctrlKey || metaKey) {
         const direction = dy > 0 ? 1 : -1;
         handleZoom(pointer, direction, Math.abs(dy));
-        lastZoomTime.current = now;
+        lastZoomTime.current = Date.now();
       } else {
+        // Handle panning after zoom transition delay
+        const now = Date.now();
+        const timeSinceZoom = now - lastZoomTime.current;
+
         const isIntentional = lethargy.check(event);
 
         if (!isIntentional && timeSinceZoom <= zoomPanTransitionDelay) {
           return;
         }
 
+        // Update position for panning
         setPosition({
           x: position.x - dx * Math.sqrt(panSpeed),
           y: position.y - dy * Math.sqrt(panSpeed),

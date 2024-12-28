@@ -9,6 +9,11 @@ import { Node } from "konva/lib/Node";
 import Konva from "konva";
 import useEvents from "./useEvents";
 
+/**
+ * A hook that calculates and maintains the bounding box of all shapes in the stage.
+ * Updates bounds when shapes are added, removed, or modified.
+ * Supports both automatic bounds calculation and manual bounds specification.
+ */
 export function useStageBounds({
   stageRef,
   loading,
@@ -24,6 +29,7 @@ export function useStageBounds({
     | React.ReactNode
     | ((props: InteractiveStageRenderProps) => ReactElement);
 }) {
+  // Initialize bounds with default values
   const [bounds, setBounds] = useState<Bounds>({
     x: 0,
     y: 0,
@@ -31,29 +37,31 @@ export function useStageBounds({
     height: 1,
   });
 
+  // Calculate bounds based on all shapes in the stage
   const updateBounds = useCallback(() => {
     const stage = stageRef.current;
     if (!stage) return;
     const stageScale = stage.scaleX();
     const stagePos = stage.position();
 
-    // Get all nodes in the stage
-    // Get the interactive layer
+    // Find the interactive layer
     const layer = stage.findOne("#interactive-layer") as Konva.Layer;
     if (!layer) {
+      // Retry if layer not found (async loading)
       setTimeout(updateBounds, 0);
       return;
     }
+
+    // Get all shapes in the layer
     const nodes = layer.find("Shape");
     if (nodes.length === 0) return;
 
-    // Initialize bounds with the first shape
+    // Calculate bounds by finding min/max coordinates of all shapes
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
     let maxX = -Number.MAX_VALUE;
     let maxY = -Number.MAX_VALUE;
 
-    // Calculate bounds for all other nodes
     nodes.forEach((node) => {
       const worldBox = getWorldBox(node, stageScale, stagePos);
       minX = Math.min(minX, worldBox.x);
@@ -62,6 +70,7 @@ export function useStageBounds({
       maxY = Math.max(maxY, worldBox.y + worldBox.height);
     });
 
+    // Use manual bounds if provided, otherwise use calculated bounds
     const newBounds = {
       x: 0,
       y: 0,
@@ -88,6 +97,7 @@ export function useStageBounds({
     updateBounds();
   }, [loading, updateBounds]);
 
+  // Subscribe to node changes to update bounds
   useEvents({
     stageRef,
     children,
@@ -102,13 +112,14 @@ export function useStageBounds({
     },
   });
 
-  return {
-    bounds,
-    updateBounds,
-  };
+  return { bounds, updateBounds };
 }
 
-const getWorldBox = (shape: Node, stageScale: number, stagePos: Point) => {
+/**
+ * Helper function to calculate the world coordinates of a shape
+ * Takes into account the stage's scale and position
+ */
+function getWorldBox(shape: Node, stageScale: number, stagePos: Point) {
   const box = shape.getClientRect();
   return {
     x: (box.x - stagePos.x) / stageScale,
@@ -116,4 +127,4 @@ const getWorldBox = (shape: Node, stageScale: number, stagePos: Point) => {
     width: box.width / stageScale,
     height: box.height / stageScale,
   };
-};
+}

@@ -38,6 +38,7 @@ export function useMinimapPreview({
   preview: string | null;
   updatePreview: () => void;
 } {
+  // Store the preview image URL
   const [preview, setPreview] = useState<string | null>(null);
 
   // Keep latest props in refs to access in throttled function
@@ -46,7 +47,7 @@ export function useMinimapPreview({
   const initialScaleRef = useRef(initialScale);
   const enabledRef = useRef(enabled);
 
-  // Update refs when props change
+  // Update refs when props change to ensure throttled function uses latest values
   useEffect(() => {
     boundsRef.current = bounds;
     containerRef.current = container;
@@ -54,6 +55,7 @@ export function useMinimapPreview({
     enabledRef.current = enabled;
   }, [bounds, container, initialScale, enabled]);
 
+  // Capture the stage content as a data URL
   const capturePreview = useCallback(() => {
     if (!stageRef.current || !enabledRef.current) return;
 
@@ -119,10 +121,11 @@ export function useMinimapPreview({
   });
 
   // Initial preview update when component is ready
+  // and when the container dimensions change
   useEffect(() => {
     if (!ready) return;
     throttledUpdateRef.current();
-  }, [ready]);
+  }, [ready, container.width, container.height]);
 
   return {
     preview,

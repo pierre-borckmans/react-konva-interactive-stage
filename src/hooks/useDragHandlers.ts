@@ -10,6 +10,10 @@ interface Props {
   scale: number;
 }
 
+/**
+ * A hook that manages drag interactions for the stage.
+ * Handles start, move, and end of drag operations while maintaining position state.
+ */
 export function useDragHandlers({
   isDragging,
   setIsDragging,
@@ -17,8 +21,10 @@ export function useDragHandlers({
   position,
   scale,
 }: Props) {
+  // Store the last mouse position for calculating drag delta
   const lastMousePos = useRef<Point | null>(null);
 
+  // Handle the start of a drag operation
   const handleDragStart = useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>) => {
       e.evt.preventDefault();
@@ -28,17 +34,20 @@ export function useDragHandlers({
       const pointerPos = stage.getPointerPosition();
       if (!pointerPos) return;
 
+      // Set dragging state and store initial mouse position
       setIsDragging(true);
       lastMousePos.current = pointerPos;
     },
     [setIsDragging],
   );
 
+  // Handle the end of a drag operation
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
     lastMousePos.current = null;
   }, [setIsDragging]);
 
+  // Handle continuous drag movement
   const handleDragMove = useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>) => {
       e.evt.preventDefault();
