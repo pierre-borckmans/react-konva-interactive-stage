@@ -11,6 +11,7 @@ import { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import Shape = Konva.Shape;
 import { ReactNode, useState } from "react";
+import { color } from "../../utils/color.ts";
 
 interface StageContentProps {
   isDark: boolean;
@@ -18,7 +19,7 @@ interface StageContentProps {
   extraShapes: ReactNode[];
 }
 
-export const StageContent = ({
+export const BasicShapes = ({
   isDark,
   onShapeClick,
   extraShapes,
@@ -141,6 +142,3 @@ export const StageContent = ({
     </Group>
   );
 };
-
-export const color = (i: number, isDark: boolean) =>
-  `hsl(${i * 36}, ${isDark ? "70%" : "80%"}, ${isDark ? "40%" : "50%"})`;

@@ -7,6 +7,7 @@ import { useResizeObserver } from "./hooks/useResizeObserver";
 import useCallbacks from "./hooks/useCallbacks";
 import Minimap from "./minimap/Minimap";
 import { useMinimapPreview } from "./minimap/useMinimapPreview";
+import { useFPS } from "./hooks/useFPS";
 
 const ABSOLUTE_MAX_ZOOM = 100;
 const ABSOLUTE_MIN_ZOOM_SPEED = 0.1;
@@ -65,6 +66,7 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const dimensions = useResizeObserver(containerRef);
   const [ready, setReady] = useState(false);
+  const fps = useFPS();
 
   // Merge default options with props options
   const options: Required<InteractiveStageOptions> = {
@@ -191,8 +193,7 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
         }}
         ref={wheelContainerRef}
       >
-      {options.debug && <FPSDisplay />}
-      <Stage
+        <Stage
           ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
@@ -241,6 +242,25 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
             initialPosition={options.minimap.position}
             stagePreview={stagePreview}
           />
+        )}
+
+        {options.debug && (
+          <div
+            style={{
+              top: 0,
+              right: 0,
+              position: "absolute",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#3333",
+              padding: "5px 10px",
+              borderRadius: "5px",
+              color: "#fff",
+            }}
+          >
+            {fps} FPS
+          </div>
         )}
       </div>
     </div>

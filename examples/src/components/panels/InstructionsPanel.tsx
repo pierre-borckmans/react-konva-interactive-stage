@@ -1,5 +1,5 @@
-import { ZoomIcon, EyeIcon, DragIcon } from "./icons";
-import ResetIcon from "./icons/ResetIcon.tsx";
+import { ZoomIcon, EyeIcon, DragIcon } from "../icons";
+import ResetIcon from "../icons/ResetIcon.tsx";
 
 export const InstructionsPanel = ({
   onAddShape,

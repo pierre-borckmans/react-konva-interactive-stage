@@ -1,7 +1,7 @@
-import { SunIcon, MoonIcon } from "./icons";
-import GithubIcon from "./icons/GithubIcon.tsx";
-import NpmIcon from "./icons/NpmIcon.tsx";
-import { getPackageVersion } from "../utils/getPackageVersion";
+import { SunIcon, MoonIcon } from "../icons";
+import GithubIcon from "../icons/GithubIcon.tsx";
+import NpmIcon from "../icons/NpmIcon.tsx";
+import { getPackageVersion } from "../../utils/getPackageVersion.ts";
 
 interface HeaderProps {
   isDark: boolean;
@@ -15,7 +15,9 @@ export const Header = ({ isDark, onToggleDarkMode }: HeaderProps) => {
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             React Konva Interactive Stage Demo{" "}
-            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">v{getPackageVersion()}</span>
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+              v{getPackageVersion()}
+            </span>
           </h1>
           <div className="flex items-center gap-4">
             <NpmIcon

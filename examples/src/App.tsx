@@ -1,19 +1,28 @@
+import { ReactNode, useRef, useState } from "react";
 import InteractiveStage, {
   InteractiveStageRenderProps,
   InteractiveStageType,
 } from "react-konva-interactive-stage";
-import { ReactNode, useRef, useState } from "react";
-import { Header } from "./components/Header";
-import { InstructionsPanel } from "./components/InstructionsPanel";
-import { color, StageContent } from "./components/StageContent";
-import { useDarkMode } from "./hooks/useDarkMode";
-import StatePanel from "./components/StatePanel.tsx";
-import { Circle } from "react-konva";
 import { Bounds, VisibleRect } from "react-konva-interactive-stage/dist/types";
-import OptionsPanel from "./components/OptionsPanel.tsx";
+import { Header } from "./components/panels/Header.tsx";
+import { useDarkMode } from "./hooks/useDarkMode";
+import { Circle } from "react-konva";
+import { InstructionsPanel } from "./components/panels/InstructionsPanel.tsx";
+import OptionsPanel from "./components/panels/OptionsPanel.tsx";
+import StatePanel from "./components/panels/StatePanel.tsx";
+import { Tab, TabList, TabGroup, TabPanels, TabPanel } from "@headlessui/react";
+import { color } from "./utils/color.ts";
+import { BasicShapes } from "./components/stages/BasicShapes.tsx";
+import { Images } from "./components/stages/Images.tsx";
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 function App() {
   const [isDark, setIsDark] = useDarkMode(true);
+  const tabs = ["Basic Shapes", "Custom Content"];
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const stageRef = useRef<InteractiveStageType>(null);
 
@@ -34,7 +43,7 @@ function App() {
 
   const [debug, setDebug] = useState(true);
   const [clampPosition, setClampPosition] = useState(true);
-  const [minimap, setMinimap] = useState(true);
+  const [minimap, setMinimap] = useState(false);
   const [maxZoom, setMaxZoom] = useState(5);
   const [panSpeed, setPanSpeed] = useState(1.5);
   const [zoomSpeed, setZoomSpeed] = useState(5);
@@ -93,8 +102,29 @@ function App() {
               />
             </div>
 
-            <div className="flex-1 bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg min-h-0">
-              <div className="h-full p-4">
+            <div className="w-full bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg min-h-0 flex flex-col h-full">
+              <TabGroup selectedIndex={selectedTab} onChange={setSelectedTab}>
+                <TabList className="flex space-x-1 rounded-t-lg bg-gray-100 dark:bg-gray-700 p-2">
+                  {tabs.map((tab) => (
+                    <Tab
+                      key={tab}
+                      className={({ selected }) =>
+                        classNames(
+                          "w-full rounded-lg py-1.5 text-sm font-medium leading-5",
+                          "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-gray-100 dark:ring-offset-gray-700 ring-white/60 ring-opacity-60",
+                          selected
+                            ? "bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow"
+                            : "text-gray-500 dark:text-gray-400 hover:bg-white/[0.12] hover:text-gray-900 dark:hover:text-white",
+                        )
+                      }
+                    >
+                      {tab}
+                    </Tab>
+                  ))}
+                </TabList>
+              </TabGroup>
+
+              <div className="flex min-h-0 h-full p-4">
                 <InteractiveStage
                   stageRef={stageRef}
                   onZoomChange={setZoom}
@@ -113,22 +143,27 @@ function App() {
                       size: 0.2,
                     },
                   }}
-                  className="bg-gray-50 dark:bg-gray-900 rounded-md p-4"
+                  className="h-full bg-gray-50 dark:bg-gray-900 rounded-md p-8"
                 >
-                  {({ zoomToElement }: InteractiveStageRenderProps) => (
-                    <StageContent
-                      isDark={isDark}
-                      extraShapes={extraShapes}
-                      onShapeClick={(e) =>
-                        zoomToElement(e.target, {
-                          paddingPercent: 0.2,
-                        })
-                      }
-                    />
-                  )}
+                  {({ zoomToElement }: InteractiveStageRenderProps) =>
+                    selectedTab === 0 ? (
+                      <BasicShapes
+                        isDark={isDark}
+                        extraShapes={extraShapes}
+                        onShapeClick={(e) =>
+                          zoomToElement(e.target, {
+                            paddingPercent: 0.2,
+                          })
+                        }
+                      />
+                    ) : (
+                      <Images />
+                    )
+                  }
                 </InteractiveStage>
               </div>
             </div>
+
             <span className="text-gray-500 dark:text-gray-400 w-full flex justify-end py-2 opacity-50">
               Made with ❤️ by borck
             </span>
