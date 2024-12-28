@@ -40,7 +40,10 @@ export function useStageBounds({
     // Get all nodes in the stage
     // Get the interactive layer
     const layer = stage.findOne("#interactive-layer") as Konva.Layer;
-    if (!layer) return;
+    if (!layer) {
+      setTimeout(updateBounds, 0);
+      return;
+    }
     const nodes = layer.find("Shape");
     if (nodes.length === 0) return;
 

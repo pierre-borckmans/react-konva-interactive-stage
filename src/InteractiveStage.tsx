@@ -212,10 +212,10 @@ const InteractiveStage: React.FC<InteractiveStageProps> = ({
           {options.debug && (
             <Layer id="debug-layer">
               <Rect
-                x={bounds.x}
-                y={bounds.y}
-                width={bounds.width}
-                height={bounds.height}
+                x={bounds.x + 2}
+                y={bounds.y + 2}
+                width={bounds.width - 4}
+                height={bounds.height - 4}
                 stroke={"#777"}
                 strokeWidth={0.3}
                 dash={[5, 10]}

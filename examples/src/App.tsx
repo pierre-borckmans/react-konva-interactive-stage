@@ -10,7 +10,7 @@ import { Circle } from "react-konva";
 import { InstructionsPanel } from "./components/panels/InstructionsPanel.tsx";
 import OptionsPanel from "./components/panels/OptionsPanel.tsx";
 import StatePanel from "./components/panels/StatePanel.tsx";
-import { Tab, TabList, TabGroup, TabPanels, TabPanel } from "@headlessui/react";
+import { Tab, TabList, TabGroup } from "@headlessui/react";
 import { color } from "./utils/color.ts";
 import { BasicShapes } from "./components/stages/BasicShapes.tsx";
 import { Images } from "./components/stages/Images.tsx";
@@ -102,7 +102,10 @@ function App() {
               />
             </div>
 
-            <div className="w-full bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg min-h-0 flex flex-col h-full">
+            <div
+              className="w-full bg-white dark:bg-gray-800 shadow-sm rounded-lg min-h-0 flex flex-col h-full"
+              style={{ overflow: "visible" }}
+            >
               <TabGroup selectedIndex={selectedTab} onChange={setSelectedTab}>
                 <TabList className="flex space-x-1 rounded-t-lg bg-gray-100 dark:bg-gray-700 p-2">
                   {tabs.map((tab) => (
@@ -124,7 +127,10 @@ function App() {
                 </TabList>
               </TabGroup>
 
-              <div className="flex min-h-0 h-full p-4">
+              <div
+                className="flex min-h-0 h-full p-4 overflow-visible"
+                style={{ overflow: "visible" }}
+              >
                 <InteractiveStage
                   stageRef={stageRef}
                   onZoomChange={setZoom}
@@ -143,7 +149,7 @@ function App() {
                       size: 0.2,
                     },
                   }}
-                  className="h-full bg-gray-50 dark:bg-gray-900 rounded-md p-8"
+                  className="h-full bg-gray-50 dark:bg-gray-900 rounded-md p-3"
                 >
                   {({ zoomToElement }: InteractiveStageRenderProps) =>
                     selectedTab === 0 ? (
